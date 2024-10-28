@@ -1,0 +1,6 @@
+[package]
+name = "abstract_algebra_manual"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
