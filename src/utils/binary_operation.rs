@@ -24,4 +24,8 @@ where
     fn add(a: T, b: T) -> T {
         a + b
     }
+
+    fn neg(a:T) -> T {
+        -a
+    }
 }
