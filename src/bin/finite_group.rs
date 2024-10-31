@@ -1,7 +1,7 @@
 
-use abstract_algebra_manual::utils::set::Set;
+use abstract_algebra_manual::algbra_structs::Set;
 use abstract_algebra_manual::utils::axiom::axiom;
-use abstract_algebra_manual::group::Group;
+use abstract_algebra_manual::algbra_structs::Group;
 
 struct Group7<T> {
     elements: Vec<T>,
@@ -35,7 +35,7 @@ where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::Parti
         Group7 { elements, operation }
     }
 
-    fn get_identity(&self) -> T {
+    fn has_identity(&self) -> T {
         self.elements[0]
     }
 
@@ -46,17 +46,48 @@ where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::Parti
 
 fn main() {
     // let group = Group7::<i32>::new(vec![0, 1, 2, 3, 4, 5, 6]);
-    let group = Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7);
+
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test() {
-        let group = Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7);
-
-        assert_eq!(axiom((1, 2, 3), group.get_identity(), |x, y| x + y), 4);
+    fn get_test_group() -> Group7<i32> {
+        Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7)
     }
+
+    #[test]
+    fn test_elements() {
+        let group = get_test_group();
+        assert_eq!(group.elements(), &vec![0, 1, 2, 3, 4, 5, 6]);
+    }
+
+    #[test]
+    fn test_sample() {
+        let group = get_test_group();
+        assert_eq!(group.sample(Some(1)), Some(&1));
+    }
+
+    #[test]
+    fn test_contains() {
+        let group = get_test_group();
+        assert_eq!(group.contains(&10), false);
+        assert_eq!(group.contains(&7), false);
+        assert_eq!(group.contains(&3), true);
+    }
+
+    #[test]
+    fn axiom_test() {
+        let group = get_test_group();
+        assert_eq!(axiom((1, 2, 3), group.has_identity(), |x, y| x + y), 4);
+    }
+
+    #[test]
+    fn test_operation() {
+        let group = get_test_group();
+        assert_eq!(group.get_operation()(1, 2), 3);
+    }
+
+
 }

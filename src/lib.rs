@@ -1,6 +1,4 @@
-pub mod group;
-
-pub mod field;
+pub mod algbra_structs;
 
 pub mod utils;
 

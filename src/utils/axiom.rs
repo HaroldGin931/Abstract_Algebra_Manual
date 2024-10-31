@@ -22,25 +22,3 @@ where
     4
 }
 
-
-// pub fn axiom<T>(a: (T, T, T), id: T, op: fn(T, T) -> T) -> &'static str 
-// where
-//     T: std::cmp::PartialEq + std::ops::Neg<Output = T> + Copy,
-// {
-//     // is_closed
-//     let _ = op(a.0, a.1);
-//     // is_associative
-//     if !(op(a.0, op(a.1, a.2)) == op(op(a.0, a.1), a.2)) {
-//         return "associative is not satisfied";
-//     }
-//     // has_identity
-//     if !(op(id, id) == id) {
-//         return "identity is not satisfied, this is a simigroup";
-//     };
-//     // is_inversable
-//     if !(op(a.0, -a.0) == id) {
-//         return "inversable is not satisfied, this is a monoid";
-//     }
-
-//     "Axiom is satisfied"
-// }
