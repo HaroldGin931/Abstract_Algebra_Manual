@@ -1,17 +1,17 @@
-
+use abstract_algebra_manual::algbra_structs::BinaryOp;
 use abstract_algebra_manual::algbra_structs::Set;
-use abstract_algebra_manual::utils::axiom::axiom;
 use abstract_algebra_manual::algbra_structs::Group;
 
 struct Group7<T> {
     elements: Vec<T>,
-    operation: fn(T, T) -> T,
+    operation: BinaryOp<T>,
+    identity: Option<T>,
 }
 
 impl<T> Set<T> for Group7<T>
 where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy {
     fn new_set(elements: Vec<T>) -> Self {
-        Group7 { elements, operation: |_, _| panic!("Operation not defined") }
+        Group7 { elements, operation: |_, _| panic!("Operation not defined"), identity: None }
     }
 
     fn elements(&self) -> &Vec<T> {
@@ -31,15 +31,15 @@ where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::Parti
 impl<T> Group<T> for Group7<T>
 where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy {
 
-    fn new_group(elements: Vec<T>, operation: fn(T, T) -> T) -> Self {
-        Group7 { elements, operation }
+    fn new_group(elements: Vec<T>, operation: BinaryOp<T>, identity: Option<T>) -> Self {
+        Group7 { elements, operation, identity }
     }
 
-    fn has_identity(&self) -> T {
-        self.elements[0]
+    fn identity(&self) -> T {
+        self.identity.unwrap()
     }
 
-    fn get_operation(&self) -> fn(T, T) -> T {
+    fn get_operation(&self) -> BinaryOp<T> {
         self.operation
     }
 }
@@ -52,9 +52,10 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use abstract_algebra_manual::utils::axiom::axiom;
 
     fn get_test_group() -> Group7<i32> {
-        Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7)
+        Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7, Some(0))
     }
 
     #[test]
@@ -80,7 +81,7 @@ mod tests {
     #[test]
     fn axiom_test() {
         let group = get_test_group();
-        assert_eq!(axiom((1, 2, 3), group.has_identity(), |x, y| x + y), 4);
+        assert_eq!(axiom((1, 2, 3), group.identity(), |x, y| x + y), 4);
     }
 
     #[test]

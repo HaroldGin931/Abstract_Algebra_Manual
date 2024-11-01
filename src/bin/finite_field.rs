@@ -1,20 +1,22 @@
+use abstract_algebra_manual::algbra_structs::BinaryOp;
 use abstract_algebra_manual::algbra_structs::Set;
 use abstract_algebra_manual::algbra_structs::Group;
 use abstract_algebra_manual::algbra_structs::Field;
-use abstract_algebra_manual::utils::axiom::axiom;
 
 struct F7<T> {
     elements: Vec<T>,
-    op_0: fn(T, T) -> T,
-    op_1: fn(T, T) -> T,
+    op_0: BinaryOp<T>,
+    id_0: Option<T>,
+    op_1: BinaryOp<T>,
+    id_1: Option<T>,
 }
 
 impl<T> Set<T> for F7<T>
 where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy {
     fn new_set(elements: Vec<T>) -> Self {
         F7 {elements,
-            op_0: |_, _| panic!("Operation not defined"),
-            op_1: |_, _| panic!("Operation not defined")
+            op_0: |_, _| panic!("Operation not defined"), id_0: None,
+            op_1: |_, _| panic!("Operation not defined"), id_1: None,
         }
     }
 
@@ -36,16 +38,16 @@ impl<T> Group<T> for F7<T>
 where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy {
 
     fn new_group(elements: Vec<T>,
-                 op_0: fn(T, T) -> T) -> Self {
-        F7 {elements, op_0,
-            op_1: |_, _| panic!("Operation not defined")}
+                 op_0: BinaryOp<T>, id_0: Option<T>) -> Self {
+        F7 {elements, op_0, id_0,
+            op_1: |_, _| panic!("Operation not defined"), id_1: None,}
     }
 
-    fn has_identity(&self) -> T {
-        self.elements[0]
+    fn identity(&self) -> T {
+        self.id_0.unwrap()
     }
 
-    fn get_operation(&self) -> fn(T, T) -> T {
+    fn get_operation(&self) -> BinaryOp<T> {
         self.op_0
     }
 }
@@ -53,12 +55,16 @@ where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::Parti
 impl<T> Field<T> for F7<T>
 where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy {
     fn new_field(elements: Vec<T>,
-                 op_0: fn(T, T) -> T,
-                 op_1: fn(T, T) -> T) -> Self {
-        F7 {elements, op_0, op_1 }
+                 op_0: BinaryOp<T>, id_0: Option<T>,
+                 op_1: BinaryOp<T>, id_1: Option<T>) -> Self {
+        F7 {elements, op_0, id_0, op_1, id_1}
     }
 
-    fn get_sec_opeartion(&self) -> fn(T, T) -> T {
+    fn sec_identity(&self) -> T {
+        self.id_1.unwrap()
+    }
+
+    fn get_sec_opeartion(&self) -> BinaryOp<T> {
         self.op_1
     }
 }
@@ -71,44 +77,43 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use abstract_algebra_manual::utils::axiom::axiom;
 
     fn get_test_field() -> F7<i32> {
         F7::new_field(vec![0, 1, 2, 3, 4, 5, 6],
-            |x, y| (x + y) % 7,
-            |x, y| (x * y) % 7)
+            |x, y| (x + y) % 7, Some(0),
+            |x, y| (x * y) % 7, Some(1))
     }
 
     #[test]
     fn test_elements() {
-        let group = get_test_field();
-        assert_eq!(group.elements(), &vec![0, 1, 2, 3, 4, 5, 6]);
+        let field = get_test_field();
+        assert_eq!(field.elements(), &vec![0, 1, 2, 3, 4, 5, 6]);
     }
 
     #[test]
     fn test_sample() {
-        let group = get_test_field();
-        assert_eq!(group.sample(Some(1)), Some(&1));
+        let field = get_test_field();
+        assert_eq!(field.sample(Some(1)), Some(&1));
     }
 
     #[test]
     fn test_contains() {
-        let group = get_test_field();
-        assert_eq!(group.contains(&10), false);
-        assert_eq!(group.contains(&7), false);
-        assert_eq!(group.contains(&3), true);
+        let field = get_test_field();
+        assert_eq!(field.contains(&10), false);
+        assert_eq!(field.contains(&7), false);
+        assert_eq!(field.contains(&3), true);
     }
 
     #[test]
     fn axiom_test() {
-        let group = get_test_field();
-        assert_eq!(axiom((1, 2, 3), group.has_identity(), |x, y| x + y), 4);
+        let field = get_test_field();
+        assert_eq!(axiom((1, 2, 3), field.identity(), |x, y| x + y), 4);
     }
 
     #[test]
     fn test_operation() {
-        let group = get_test_field();
-        assert_eq!(group.get_operation()(1, 2), 3);
+        let field = get_test_field();
+        assert_eq!(field.get_operation()(1, 2), 3);
     }
-
-
 }
