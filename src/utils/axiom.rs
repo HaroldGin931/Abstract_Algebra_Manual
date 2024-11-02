@@ -22,73 +22,180 @@ where
     4
 }
 
-pub struct GroupAxiomChecker<T> {
+pub struct GroupAxiomChecker<T>
+where
+    T: std::cmp::PartialEq + std::ops::Neg<Output = T> + Default + Copy + std::fmt::Debug
+{
+    // Caller's raw input
     raw_set: Vec<T>,
     op: BinaryOp<T>,
-    pool: Vec<Vec<T>>,
+    claimed_identity: Option<T>,
+    // Temperary storage for the output of the bi-operation
+    output_matrix: Vec<Vec<T>>,
+    identity: Option<T>,
+    checked: bool,
 }
 
 impl<T> GroupAxiomChecker<T> 
 where
     T: std::cmp::PartialEq + std::ops::Neg<Output = T> + Default + Copy + std::fmt::Debug
 {
-    pub fn new(raw_set: Vec<T>, op: BinaryOp<T> ) -> Self {
-        let mut pool = vec![vec![T::default(); raw_set.len()]; raw_set.len()];
+    pub fn new(raw_set: Vec<T>, op: BinaryOp<T>, unchecked_identity: Option<T> ) -> Self {
+        // to verify that the set and operation satisfy the group axioms,
+        // we need to compute all possible outcomes for each
+        // pairwise combination of elements within the set.
 
-        for i in 0..raw_set.len() {
-            for k in 0..raw_set.len() {
-                pool[i][k] = op(raw_set[i], raw_set[k]);
-            }
-        }
+        let output_matrix: Vec<Vec<T>> = raw_set.iter()
+        .map(|&x| {
+            raw_set.iter().map(|&y| op(x, y)).collect()
+        }).collect();
 
-        GroupAxiomChecker { raw_set, op, pool }
+        GroupAxiomChecker { raw_set, op, claimed_identity: unchecked_identity, output_matrix, identity: None, checked: false }
     }
 
-    pub fn find_identity(&self) -> Option<T> {
-        for (i, v) in self.pool.iter().enumerate() {
-            if self.raw_set == *v {
-                return Some(self.raw_set[i]);
-            }
-        }
-        println!("Identity not found");
-        None
+    pub fn is_closed(&self) -> bool {
+        self.output_matrix.iter()
+        .all(|row|row.iter()
+            .all(|j| self.raw_set.contains(j))
+        )
     }
 
-    pub fn check_identity(&self, id: T) -> bool {
-        for i in self.raw_set.iter() {
-            if id != (self.op)(id, *i) {
-                // println!("Identity check failed at op({}, {})",id, *i);
+    // a + (b + c) = (a + b) + c
+    pub fn is_associative(&self) -> bool {
+        self.raw_set.iter().all(|&a| {
+            self.raw_set.iter().all(|&b| {
+                self.raw_set.iter().all(|&c| {
+                    (self.op)(a, (self.op)(b, c)) == (self.op)((self.op)(a, b), c)
+                })
+            })
+        })
+    }
+
+    fn find_identity(&mut self) -> Option<T> {
+        self.output_matrix.iter().enumerate()
+        .find(|&(_,v)|self.raw_set == *v)
+        .map(|(i,v)|v[i])
+    }
+
+    fn check_claimed_identity(&mut self) {
+        if self.raw_set.iter().all(|&x| (self.op)(self.claimed_identity.unwrap(), x) == x) {
+            self.identity = self.claimed_identity;
+            self.checked = true;
+        } else {
+            self.identity = self.find_identity();
+            self.checked = true;
+        }
+    }
+
+    pub fn get_identity(&mut self) -> Option<T> {
+        if self.checked {
+            return self.identity;
+        }
+
+        if let Some(_) = self.claimed_identity {
+            self.check_claimed_identity();
+        } else {
+            self.identity = self.find_identity();
+            self.checked = true;
+        }
+        return self.identity;
+    }
+
+    pub fn has_identity(&mut self) -> bool {
+        if !self.checked {
+            self.get_identity();
+        }
+        if self.identity.is_some() {
+            return true;
+        } else {return false};
+    }
+
+    pub fn is_inversable(&self) -> bool {
+        let mut used = vec![false; self.raw_set.len()];
+        for element in self.raw_set.iter() {
+            let mut accumlator: u8 = 0;
+            // inverse of an element must be an unique one,
+            // if two element have the same inverse, the set is not inversable
+            for (i, candidate) in self.raw_set.iter().enumerate() {
+                // println!("{:?} {:?}", *element, *candidate);
+                if (self.op)(*element, *candidate) == self.identity.unwrap() {
+                    if !used[i] {used[i] = true} else {return false};
+                    accumlator += 1;
+                } 
+            }
+            // if we find more than one inverse, the accumlator will be greater than 1,
+            // if we find no inverse, the accumlator will be 0, both cases are not inversable
+            if accumlator != 1 {
                 return false;
             }
         }
         true
     }
 
-    pub fn check_associative(&self) -> bool {
-        for i in 0..self.raw_set.len() {
-            for j in 0..self.raw_set.len() {
-                for k in 0..self.raw_set.len() {
-                    if (self.op)(self.raw_set[i], (self.op)(self.raw_set[j], self.raw_set[k])) != (self.op)((self.op)(self.raw_set[i], self.raw_set[j]), self.raw_set[k]) {
-                        return false;
-                    }
-                }
-            }
-        }
+    pub fn result(&mut self) -> bool {
+        if !self.is_closed() {
+            println!("The set is not closed under the operation.");
+            return false;}
+        if !self.is_associative() {
+            println!("The set is not associativ under the operation.");
+            return false;}
+        if !self.has_identity() {
+            println!("The set has no identity under the operation.");
+            return false;}
+        if !self.is_inversable()  {
+            println!("The set is not inversable under the operation.");
+            return false;}
         true
     }
+}
 
-    pub fn check_inversable(&self) -> bool {
-        true
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_normal_case_with_id() {
+        let set = vec![0, 1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x + y) % 7;
+        let identity = Some(0);
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), true);
     }
 
-    pub fn check_closed(&self) -> bool {
-        for i in self.pool.iter() {
-            for j in i.iter() {
-                if !self.raw_set.contains(j) {
-                    return false;
-                }
-            }
-        }
-        true
+    #[test]
+    fn test_add_case_without_id() {
+        let set = vec![0, 1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x + y) % 7;
+        let identity = None;
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), true);
+    }
+
+    #[test]
+    fn test_add_case_with_wrong_id() {
+        // FIXME: Should generate a warning to the user
+        let set = vec![0, 1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x + y) % 7;
+        let identity = Some(1);
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), true);
+    }
+
+    #[test]
+    fn test_mult_case_with_id() {
+        let set = vec![1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x * y) % 7;
+        let identity = Some(1);
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), true);
+    }
+
+    #[test]
+    fn test_mult_case_with_wrong_id() {
+        let set = vec![1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x * y) % 7;
+        let identity = Some(0);
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), true);
     }
 }
