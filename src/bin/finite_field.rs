@@ -77,7 +77,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::utils::group_axiom::axiom;
+    use abstract_algebra_manual::axioms::checker::field::FieldAxiomChecker;
 
     fn get_test_field() -> F7<i32> {
         F7::new_field(vec![0, 1, 2, 3, 4, 5, 6],
@@ -108,7 +108,10 @@ mod tests {
     #[test]
     fn axiom_test() {
         let field = get_test_field();
-        assert_eq!(axiom((1, 2, 3), field.identity(), |x, y| x + y), 4);
+        let mut checker = FieldAxiomChecker::new(field.elements().clone(),
+            field.op_0, field.id_0,
+            field.op_1, field.id_1);
+        assert_eq!(checker.result(), true);
     }
 
     #[test]

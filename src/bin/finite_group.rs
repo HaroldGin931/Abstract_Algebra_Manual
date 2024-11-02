@@ -52,7 +52,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::utils::group_axiom::axiom;
+    use abstract_algebra_manual::axioms::checker::group::GroupAxiomChecker;
 
     fn get_test_group() -> Group7<i32> {
         Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7, Some(0))
@@ -81,7 +81,8 @@ mod tests {
     #[test]
     fn axiom_test() {
         let group = get_test_group();
-        assert_eq!(axiom((1, 2, 3), group.identity(), |x, y| x + y), 4);
+        let mut checker = GroupAxiomChecker::new(group.elements().clone(), group.get_operation(), group.identity);
+        assert_eq!(checker.result(), true);
     }
 
     #[test]

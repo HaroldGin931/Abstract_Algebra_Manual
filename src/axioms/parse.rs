@@ -1,7 +1,7 @@
 use crate::algbra_structs::BinaryOp;
 use crate::algbra_structs::Set;
 use crate::algbra_structs::Group;
-use crate::utils::group_axiom::GroupAxiomChecker;
+use crate::axioms::checker::group::GroupAxiomChecker;
 
 pub struct GroupHandler<T> {
     elements: Vec<T>,
@@ -62,7 +62,6 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    // use crate::utils::axiom::axiom;
 
     fn get_test_group() -> GroupHandler<i32> {
         create_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7, Some(0))

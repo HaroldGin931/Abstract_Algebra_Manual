@@ -7,9 +7,9 @@ pub trait Set<T> {
     fn contains(&self, element: &T) -> bool;
 }
 
-pub trait Group<T>: Set<T>// + BinaryOperation<T>
+pub trait Group<T>: Set<T>
 where
-    T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy,
+    T: std::ops::Add<Output = T> + std::cmp::PartialEq + Copy,
 {
     fn new_group(elements: Vec<T>, operation: BinaryOp<T>, identity: Option<T>) -> Self;
     fn identity(&self) -> T;
@@ -18,7 +18,7 @@ where
 
 pub trait Field<T>: Group<T> 
 where
-    T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::PartialEq + Copy,
+    T: std::ops::Add<Output = T> + std::cmp::PartialEq + Copy,
 {
     fn new_field(elements: Vec<T>, op_0: BinaryOp<T>, identity_0: Option<T>, op_1: BinaryOp<T>, identity_1: Option<T>) -> Self;
     fn sec_identity(&self) -> T;

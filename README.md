@@ -20,7 +20,25 @@ The project therefore needs to complete the relevant interfaces and test functio
 
 ## Roadmap
 
-- Stage 1: Implement a basic Group trait with finite groups and an axiom-check function.
-- Stage 2: Implement a basic Field trait with finite groups.
-- Stage 3: Define self::one and self::zero, ensuring they exist within the set. Traits should be defined more precisely.
-- Stage 4: TBD (Linear combination, graph example/group product, field extension)
+- [x] Stage 1: Implement a basic Group trait with finite groups and an axiom-check function.
+
+- [x] Stage 2: Implement a basic Field trait with finite groups.
+  - [x] Group Axiom Checker
+  - [x] Field Axiom Checker 
+- [ ] Stage 3: Define self::one and self::zero, ensuring they exist within the set. Traits should be defined more precisely.
+  - [ ] Element inverse trait with defaut implement
+  - [ ] Remove `mut checker` new structure should be
+    - checker_close_associative(set, op) --> simigroup, 
+    - check_exist_id(simigroup) --> monoid, 
+    - check_inverse(monoid) --> group,
+    - check_commutative(group) --> abelian group
+  - [ ] more comment
+- [ ] Stage 4:
+  - [ ] Linear combination
+  - [ ] graph example/group product, 
+  - [ ] EC Curve example
+  - [ ] Intergrate with ZKling
+- [ ] Stage 5:
+  - [ ] Ring Axiom Checker
+  - [ ] field extension
+  - [ ] Polynomial mod

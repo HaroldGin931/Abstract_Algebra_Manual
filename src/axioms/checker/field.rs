@@ -1,5 +1,5 @@
 use crate::algbra_structs::BinaryOp;
-use crate::utils::group_axiom::GroupAxiomChecker;
+use crate::axioms::checker::group::GroupAxiomChecker;
 
 pub struct FieldAxiomChecker<T>
 where
@@ -24,10 +24,10 @@ where
     pub fn new(raw_set: Vec<T>, 
         op_0: BinaryOp<T>, claimed_identity_0: Option<T>,
         op_1: BinaryOp<T>, claimed_identity_1: Option<T>) -> Self {
+
             FieldAxiomChecker {raw_set,
                 op_0, claimed_identity_0,
                 op_1, claimed_identity_1,
-                // output_matrix,
                 identity_0: None, identity_1: None,
                 checked_0: false, checked_1: false}
     }
