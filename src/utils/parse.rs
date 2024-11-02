@@ -1,7 +1,7 @@
 use crate::algbra_structs::BinaryOp;
 use crate::algbra_structs::Set;
 use crate::algbra_structs::Group;
-use crate::utils::axiom::GroupAxiomChecker;
+use crate::utils::group_axiom::GroupAxiomChecker;
 
 pub struct GroupHandler<T> {
     elements: Vec<T>,

@@ -40,7 +40,7 @@ impl<T> GroupAxiomChecker<T>
 where
     T: std::cmp::PartialEq + std::ops::Neg<Output = T> + Default + Copy + std::fmt::Debug
 {
-    pub fn new(raw_set: Vec<T>, op: BinaryOp<T>, unchecked_identity: Option<T> ) -> Self {
+    pub fn new(raw_set: Vec<T>, op: BinaryOp<T>, claimed_identity: Option<T>) -> Self {
         // to verify that the set and operation satisfy the group axioms,
         // we need to compute all possible outcomes for each
         // pairwise combination of elements within the set.
@@ -50,14 +50,18 @@ where
             raw_set.iter().map(|&y| op(x, y)).collect()
         }).collect();
 
-        GroupAxiomChecker { raw_set, op, claimed_identity: unchecked_identity, output_matrix, identity: None, checked: false }
+        GroupAxiomChecker { raw_set, op, claimed_identity, output_matrix, identity: None, checked: false }
     }
 
     pub fn is_closed(&self) -> bool {
-        self.output_matrix.iter()
-        .all(|row|row.iter()
-            .all(|j| self.raw_set.contains(j))
-        )
+        self.output_matrix.iter().enumerate().all(|(row_index, row)| {
+            row.iter().enumerate().all(|(col_index, element)|{
+                if !self.raw_set.contains(&element) {
+                    println!("The result of op({:?}, {:?}) is {:?}", self.raw_set[row_index], self.raw_set[col_index], element);
+                    false
+                } else { true }
+            })
+        })
     }
 
     // a + (b + c) = (a + b) + c
@@ -65,7 +69,10 @@ where
         self.raw_set.iter().all(|&a| {
             self.raw_set.iter().all(|&b| {
                 self.raw_set.iter().all(|&c| {
-                    (self.op)(a, (self.op)(b, c)) == (self.op)((self.op)(a, b), c)
+                    if (self.op)(a, (self.op)(b, c)) != (self.op)((self.op)(a, b), c) {
+                        println!("Find out {:?} {:?} {:?} are not satified associative", a, b, c);
+                        false
+                    } else { true }
                 })
             })
         })
@@ -82,6 +89,7 @@ where
             self.identity = self.claimed_identity;
             self.checked = true;
         } else {
+            println!("The claimed identity {:?} is not an real identity.", self.claimed_identity.unwrap());
             self.identity = self.find_identity();
             self.checked = true;
         }
@@ -198,4 +206,14 @@ mod tests {
         let mut checker = GroupAxiomChecker::new(set, op, identity);
         assert_eq!(checker.result(), true);
     }
+
+    #[test]
+    fn test_mult_case_with_wrong_op() {
+        let set = vec![1, 2, 3, 4, 5, 6];
+        let op = |x, y| (x * y);
+        let identity = Some(0);
+        let mut checker = GroupAxiomChecker::new(set, op, identity);
+        assert_eq!(checker.result(), false);
+    }
+
 }

@@ -77,7 +77,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::utils::axiom::axiom;
+    use abstract_algebra_manual::utils::group_axiom::axiom;
 
     fn get_test_field() -> F7<i32> {
         F7::new_field(vec![0, 1, 2, 3, 4, 5, 6],

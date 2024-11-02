@@ -52,7 +52,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::utils::axiom::axiom;
+    use abstract_algebra_manual::utils::group_axiom::axiom;
 
     fn get_test_group() -> Group7<i32> {
         Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7, Some(0))
