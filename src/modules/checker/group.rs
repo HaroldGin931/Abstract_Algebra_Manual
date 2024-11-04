@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn test_mult_case_with_wrong_op() {
         let set = vec![1, 2, 3, 4, 5, 6];
-        let op = |x, y| (x * y);
+        let op = |x, y| (x * y) ;
         let identity = Some(0);
         let mut checker = GroupAxiomChecker::new(set, op, identity);
         assert_eq!(checker.result(), false);

@@ -46,7 +46,6 @@ where T: std::ops::Add<Output = T> + std::ops::Neg<Output = T> + std::cmp::Parti
 
 fn main() {
     // let group = Group7::<i32>::new(vec![0, 1, 2, 3, 4, 5, 6]);
-
 }
 
 #[cfg(test)]
