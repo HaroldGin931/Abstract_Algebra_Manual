@@ -1,5 +1,5 @@
 // The axiom function is a helper function that checks if a given set of elements and an operation satisfy the four axioms of a operation and set. the implemention of axiom should be hide to the caller. The caller should only be able to use the function to check if a given set of elements and an operation satisfy the four axioms of a operation and set
-use crate::algbra_structs::BinaryOp;
+use crate::algebra_structs::BinaryOp;
 
 pub struct GroupAxiomChecker<T>
 where

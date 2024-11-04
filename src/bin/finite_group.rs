@@ -1,6 +1,6 @@
-use abstract_algebra_manual::algbra_structs::BinaryOp;
-use abstract_algebra_manual::algbra_structs::Set;
-use abstract_algebra_manual::algbra_structs::Group;
+use abstract_algebra_manual::algebra_structs::BinaryOp;
+use abstract_algebra_manual::algebra_structs::Set;
+use abstract_algebra_manual::algebra_structs::Group;
 
 struct Group7<T> {
     elements: Vec<T>,
@@ -52,7 +52,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::axioms::checker::group::GroupAxiomChecker;
+    use abstract_algebra_manual::modules::checker::group::GroupAxiomChecker;
 
     fn get_test_group() -> Group7<i32> {
         Group7::new_group(vec![0, 1, 2, 3, 4, 5, 6], |x, y| (x + y) % 7, Some(0))

@@ -1,5 +1,5 @@
-use crate::algbra_structs::BinaryOp;
-use crate::axioms::checker::group::GroupAxiomChecker;
+use crate::algebra_structs::BinaryOp;
+use crate::modules::checker::group::GroupAxiomChecker;
 
 pub struct FieldAxiomChecker<T>
 where

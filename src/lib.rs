@@ -1,3 +1,3 @@
-pub mod algbra_structs;
+pub mod algebra_structs;
 
-pub mod axioms;
+pub mod modules;

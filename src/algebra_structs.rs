@@ -9,6 +9,7 @@ pub trait Set<T> {
 
 pub trait Group<T>: Set<T>
 where
+// TODO: delete this std::ops::Add<Output = T> implement isequal and add 
     T: std::ops::Add<Output = T> + std::cmp::PartialEq + Copy,
 {
     fn new_group(elements: Vec<T>, operation: BinaryOp<T>, identity: Option<T>) -> Self;

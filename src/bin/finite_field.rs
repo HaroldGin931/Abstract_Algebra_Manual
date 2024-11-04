@@ -1,7 +1,7 @@
-use abstract_algebra_manual::algbra_structs::BinaryOp;
-use abstract_algebra_manual::algbra_structs::Set;
-use abstract_algebra_manual::algbra_structs::Group;
-use abstract_algebra_manual::algbra_structs::Field;
+use abstract_algebra_manual::algebra_structs::BinaryOp;
+use abstract_algebra_manual::algebra_structs::Set;
+use abstract_algebra_manual::algebra_structs::Group;
+use abstract_algebra_manual::algebra_structs::Field;
 
 struct F7<T> {
     elements: Vec<T>,
@@ -77,7 +77,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use abstract_algebra_manual::axioms::checker::field::FieldAxiomChecker;
+    use abstract_algebra_manual::modules::checker::field::FieldAxiomChecker;
 
     fn get_test_field() -> F7<i32> {
         F7::new_field(vec![0, 1, 2, 3, 4, 5, 6],
