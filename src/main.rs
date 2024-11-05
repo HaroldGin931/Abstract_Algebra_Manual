@@ -38,101 +38,62 @@ fn main() {
     loop{
         println!("Please pick one of the sets below:"); 
         println!("1. Z_7 = {{0, 1, 2, 3, 4, 5, 6}}");
-        println!("2. Z_7_no_zero = {{1, 2, 3, 4, 5, 6, 7}}");
-        let group: Option<Group<i32>>;
-        let mut selections = (0, 0);
-        let mut set_selection = String::new();
-        let mut op_selection = String::new();
-        io::stdin().read_line(&mut set_selection).expect("Failed to read line");
-        let set_selection: i32 = set_selection.trim().parse().expect("Please type a number!");
-        match set_selection {
-            1 => {
-                selections.0 = 1;
-            }
-            2 => {
-                selections.0 = 2;
-            }
+        println!("2. Z_7_no_zero = {{1, 2, 3, 4, 5, 6}}");
+
+        // Get set selection
+        let set_selection: i32 = match io::stdin()
+            .lines()
+            .next()
+            .and_then(|l| l.ok())
+            .and_then(|l| l.parse().ok()) {
+            Some(num @ 1..=2) => num,
             _ => {
-                println!("Invalid selection");
-                return;
+                println!("Invalid set selection");
+                continue;
             }
-            
-        }
-        println!("Please pick one of the binary operations below:");
+        };
+
+        println!("\nPlease pick one of the binary operations below:");
         println!("1. integer add, a + b ");
         println!("2. integer add with modulator_7, (a + b) mod 7");
         println!("3. integer multiply, a * b");
         println!("4. integer multiply with modulator_7, (a * b) mod 7");
         println!("5. integer isbigger (a > b) ");
-        io::stdin().read_line(&mut op_selection).expect("Failed to read line");
-        let op_selection: i32 = op_selection.trim().parse().expect("Please type a number!");
-        match op_selection {
-            1 => {
-                selections.1 = 1;
-            }
-            2 => {
-                selections.1 = 2;
-            }
-            3 => {
-                selections.1 = 3;
-            }
-            4 => {
-                selections.1 = 4;
-            }
-            5 => {
-                selections.1 = 5;
-            }
-            _ => {
-                println!("Invalid selection");
-                return;
-            }
-        }
 
-        match selections {
-            (1, 1) => {
-                group = Group::new(v.clone(), add);
-            }
-            (1, 2) => {
-                group = Group::new(v.clone(), add_with_modulator_7);
-            }
-            (1, 3) => {
-                group = Group::new(v.clone(), multiply);
-            }
-            (1, 4) => {
-                group = Group::new(v.clone(), multiply_with_modulator_7);
-            }
-            (1, 5) => {
-                group = Group::new(v.clone(), isbigger);
-            }
-            (2, 1) => {
-                group = Group::new(v_no_zero.clone(), add);
-            }
-            (2, 2) => {
-                group = Group::new(v_no_zero.clone(), add_with_modulator_7);
-            }
-            (2, 3) => {
-                group = Group::new(v_no_zero.clone(), multiply);
-            }
-            (2, 4) => {
-                group = Group::new(v_no_zero.clone(), multiply_with_modulator_7);
-            }
-            (2, 5) => {
-                group = Group::new(v_no_zero.clone(), isbigger);
-            }
+        // Get operation selection
+        let op_selection: i32 = match io::stdin()
+            .lines()
+            .next()
+            .and_then(|l| l.ok())
+            .and_then(|l| l.parse().ok()) {
+            Some(num @ 1..=5) => num,
             _ => {
-                println!("Invalid selection");
-                return;
+                println!("Invalid operation selection");
+                continue;
             }
         };
-        match group {
+
+        // Select the appropriate set
+        let set = if set_selection == 1 { &v } else { &v_no_zero };
+
+        // Select the appropriate operation
+        let operation = match op_selection {
+            1 => add,
+            2 => add_with_modulator_7,
+            3 => multiply,
+            4 => multiply_with_modulator_7,
+            5 => isbigger,
+            _ => unreachable!()
+        };
+
+        // Create and check group
+        match Group::new(set.clone(), operation) {
             Some(g) => {
-                println!("Group axioms are satisfied");
-                println!("The group is: {:?}", g.elements());
-                exit( 0);
+            println!("Group axioms are satisfied");
+            println!("The group is: {:?}", g.elements());
+            exit(0);
             }
-            None => {
-                println!("Can not fit the group axioms, please try again");
-            }
+            None => println!("Can not fit the group axioms, please try again")
         }
     }
 }

@@ -384,6 +384,7 @@ where
     }
 }
 
+// FIXME: implement From function
 impl<T> From<Monoid<T>> for Group<T>
 where
     T: AlgebraicElement,

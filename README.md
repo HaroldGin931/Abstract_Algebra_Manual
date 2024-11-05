@@ -42,7 +42,7 @@ The project therefore needs to complete the relevant interfaces and test functio
     - check_exist_id(simigroup) --> monoid, 
     - check_inverse(monoid) --> group,
     - check_commutative(group) --> abelian group
-- [ ] Stage 4:
+·～- [ ] Stage 4:
   - [ ] Element type, eg 'group.sample(0) --> group_element, group_element::new'
   - [ ] Define self::one and self::zero, ensuring they exist within the set. 
   - [ ] Sub group
