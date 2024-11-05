@@ -1,4 +1,4 @@
-# Abstract_Algebra_Manual
+# Abstract Algebra Manual
 
 Learn group, ring, and field structures from a Rust programming language perspective.
 
@@ -7,6 +7,16 @@ Learn group, ring, and field structures from a Rust programming language perspec
 To understand the algebraic structures commonly used in cryptography, we often need to apply knowledge of abstract algebra. However, this knowledge is typically written in mathematical language, which can present challenges for developers. In essence, though, abstract algebra is about using abstract thinking to analyze and identify properties of mathematical objects, classifying and systematically discussing these properties. Once this perspective is understood, abstract algebra becomes much easier to grasp.
 
 Rust, as a language with many excellent features, allows us to use traits and generics to define these abstract algebraic interfaces. By leveraging the compiler and test functions, we can create an introductory book on abstract algebra from a Rust perspective.
+
+## Usage
+
+1. `cargo run`, 
+2. Reading the code
+   1. algebra_trait
+   2. algebra_checker
+   3. algebra_struct
+   4. examples folder
+3. Play it with ZKlings(Not implemented)
 
 ## Challenge
 
@@ -26,19 +36,25 @@ The project therefore needs to complete the relevant interfaces and test functio
   - [x] Group Axiom Checker
   - [x] Field Axiom Checker 
 - [ ] Stage 3: Define self::one and self::zero, ensuring they exist within the set. Traits should be defined more precisely.
-  - [ ] Element inverse trait with defaut implement
-  - [ ] Remove `mut checker` new structure should be
+  - [x] Element inverse trait with defaut implement
+  - [x] Remove `mut checker` new structure should be
     - checker_close_associative(set, op) --> simigroup, 
     - check_exist_id(simigroup) --> monoid, 
     - check_inverse(monoid) --> group,
     - check_commutative(group) --> abelian group
   - [ ] more comment
 - [ ] Stage 4:
+  - [ ] Element type, eg 'group.sample(0) --> group_element, group_element::new'
+  - [ ] Sub group
+  - [ ] Gennerator
+  - [ ] Order of group, order of element.
+  - [ ] Option: default inverse operation of some common operation such like + *
+- [ ] Stage 5:
   - [ ] Linear combination
   - [ ] graph example/group product, 
   - [ ] EC Curve example
   - [ ] Intergrate with ZKling
-- [ ] Stage 5:
+- [ ] Stage 6:
   - [ ] Ring Axiom Checker
-  - [ ] field extension
-  - [ ] Polynomial mod
+  - [ ] Field extension
+  - [ ] Polynomial modular

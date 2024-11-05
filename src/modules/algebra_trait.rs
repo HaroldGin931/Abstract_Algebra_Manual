@@ -17,20 +17,31 @@ pub trait MagmaActions<T: AlgebraicElement>: SetActions<T> {
 
 pub trait Associativity<T: AlgebraicElement> {}
 
-pub trait SimigroupAction<T: AlgebraicElement>: MagmaActions<T> + Associativity<T> {}
+//  Semigroup is a set equipped with an associative binary operation.
+pub trait SimigroupAction<T: AlgebraicElement>:
+    MagmaActions<T> + Associativity<T>
+{
+}
 
 pub trait Identity<T: AlgebraicElement> {}
 
-pub trait MonoidActions<T: AlgebraicElement>: SimigroupAction<T> + Identity<T> {
+pub trait MonoidActions<T: AlgebraicElement>:
+    SimigroupAction<T> + Identity<T>
+{
     fn get_identity(&self) -> T;
 }
 
 pub trait Inverse<T: AlgebraicElement> {}
 
-pub trait GroupActions<T: AlgebraicElement>: MonoidActions<T> + Inverse<T> {
+pub trait GroupActions<T: AlgebraicElement>:
+    MonoidActions<T> + Inverse<T>
+{
     fn get_inverse(&self, element: T) -> T;
 }
 
 pub trait Commutative<T: AlgebraicElement> {}
 
-pub trait AbelianGroupActions<T: AlgebraicElement>: GroupActions<T> + Commutative<T> {}
+pub trait AbelianGroupActions<T: AlgebraicElement>:
+    GroupActions<T> + Commutative<T>
+{
+}

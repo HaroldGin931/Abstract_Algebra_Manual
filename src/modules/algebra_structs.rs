@@ -1,5 +1,5 @@
-use super::algebra_trait::*;
 use super::algebra_checker::*;
+use super::algebra_trait::*;
 
 // There is many way to get a Group from Magma,
 // but we will use the following:
@@ -18,8 +18,10 @@ pub struct Set<T: AlgebraicElement> {
     pub elements: Vec<T>,
 }
 
-impl <T> SetActions<T> for Set<T>
-where T: AlgebraicElement {
+impl<T> SetActions<T> for Set<T>
+where
+    T: AlgebraicElement,
+{
     fn elements(&self) -> &Vec<T> {
         &self.elements
     }
@@ -33,57 +35,69 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> Set<T>
-where T: AlgebraicElement {
+impl<T> Set<T>
+where
+    T: AlgebraicElement,
+{
     pub fn new(elements: Vec<T>) -> Set<T>
-    where T: AlgebraicElement {
-        let algebra = Set {
-            elements: elements,
-        };
-        algebra
+    where
+        T: AlgebraicElement,
+    {
+        Set { elements }
     }
 }
 
-impl <T> From<Vec<T>> for Set<T>
-where T: AlgebraicElement {
+impl<T> From<Vec<T>> for Set<T>
+where
+    T: AlgebraicElement,
+{
     fn from(elements: Vec<T>) -> Self {
         Set::new(elements)
     }
 }
 
-pub struct Magma<T: AlgebraicElement> 
-where T: AlgebraicElement {
+#[derive(Debug)]
+pub struct Magma<T: AlgebraicElement>
+where
+    T: AlgebraicElement,
+{
     pub elements: Vec<T>,
     pub op: BinaryOp<T>,
 }
 
-impl <T> SetActions<T> for Magma<T>
-where T: AlgebraicElement {
+impl<T> SetActions<T> for Magma<T>
+where
+    T: AlgebraicElement,
+{
     fn elements(&self) -> &Vec<T> {
         &self.elements
     }
 
     fn sample(&self, index: usize) -> &T {
-            &self.elements[index]
-        }
+        &self.elements[index]
+    }
 
     fn contains(&self, element: &T) -> bool {
         self.elements.contains(element)
     }
 }
 
-impl <T> MagmaActions<T> for Magma<T>
-where T: AlgebraicElement {
+impl<T> MagmaActions<T> for Magma<T>
+where
+    T: AlgebraicElement,
+{
     fn op(&self, left: T, right: T) -> T {
         (self.op)(left, right)
     }
 }
 
-impl <T> Magma<T>
-where T: AlgebraicElement {
+impl<T> Magma<T>
+where
+    T: AlgebraicElement,
+{
     pub fn new(elements: Vec<T>, op: BinaryOp<T>) -> Option<Magma<T>> {
         if check_closed(&elements, op) {
-            Some(Magma { elements, op: op })
+            Some(Magma { elements, op })
         } else {
             println!("Operation is not closed on the set");
             None
@@ -91,26 +105,32 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> From<(Set<T>, BinaryOp<T>)> for Magma<T>
-where T: AlgebraicElement {
+impl<T> From<(Set<T>, BinaryOp<T>)> for Magma<T>
+where
+    T: AlgebraicElement,
+{
     fn from(value: (Set<T>, BinaryOp<T>)) -> Self {
         let (set, op) = value;
-        if check_closed(&set.elements(), op) {
-            Magma { elements: set.elements, op: op }
+        if check_closed(set.elements(), op) {
+            Magma { elements: set.elements, op }
         } else {
             panic!("Operation is not closed on the set");
         }
     }
 }
 
-pub struct Simigroup<T: AlgebraicElement> 
-where T: AlgebraicElement {
+pub struct Simigroup<T: AlgebraicElement>
+where
+    T: AlgebraicElement,
+{
     pub elements: Vec<T>,
     pub op: BinaryOp<T>,
 }
 
-impl <T> SetActions<T> for Simigroup<T>
-where T: AlgebraicElement {
+impl<T> SetActions<T> for Simigroup<T>
+where
+    T: AlgebraicElement,
+{
     fn elements(&self) -> &Vec<T> {
         &self.elements
     }
@@ -124,20 +144,26 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> MagmaActions<T> for Simigroup<T>
-where T: AlgebraicElement {
+impl<T> MagmaActions<T> for Simigroup<T>
+where
+    T: AlgebraicElement,
+{
     fn op(&self, left: T, right: T) -> T {
         (self.op)(left, right)
     }
 }
 
-impl <T> Associativity<T> for Simigroup<T>
-where T: AlgebraicElement {}
+impl<T> Associativity<T> for Simigroup<T> where T: AlgebraicElement {}
 
-impl <T> Simigroup<T>
-where T: AlgebraicElement {
+impl<T> Simigroup<T>
+where
+    T: AlgebraicElement,
+{
     pub fn new(elements: Vec<T>, op: BinaryOp<T>) -> Option<Simigroup<T>> {
-        match (check_closed(&elements, op), check_associative(&elements, op)) {
+        match (
+            check_closed(&elements, op),
+            check_associative(&elements, op),
+        ) {
             (false, _) => {
                 println!("Operation is not closed on the set");
                 None
@@ -146,13 +172,15 @@ where T: AlgebraicElement {
                 println!("Operation is not associative on the set");
                 None
             }
-            (true, true) => Some(Simigroup { elements, op: op }),
+            (true, true) => Some(Simigroup { elements, op }),
         }
     }
 }
 
-impl <T> From<Magma<T>> for Simigroup<T>
-where T: AlgebraicElement {
+impl<T> From<Magma<T>> for Simigroup<T>
+where
+    T: AlgebraicElement,
+{
     fn from(value: Magma<T>) -> Self {
         let Magma { elements, op } = value;
         if check_associative(&elements, op) {
@@ -163,15 +191,19 @@ where T: AlgebraicElement {
     }
 }
 
-pub struct Monoid<T: AlgebraicElement> 
-where T: AlgebraicElement {
+pub struct Monoid<T: AlgebraicElement>
+where
+    T: AlgebraicElement,
+{
     pub elements: Vec<T>,
     pub op: BinaryOp<T>,
     pub identity: T,
 }
 
-impl <T> SetActions<T> for Monoid<T>
-where T: AlgebraicElement {
+impl<T> SetActions<T> for Monoid<T>
+where
+    T: AlgebraicElement,
+{
     fn elements(&self) -> &Vec<T> {
         &self.elements
     }
@@ -185,33 +217,40 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> MagmaActions<T> for Monoid<T>
-where T: AlgebraicElement {
+impl<T> MagmaActions<T> for Monoid<T>
+where
+    T: AlgebraicElement,
+{
     fn op(&self, left: T, right: T) -> T {
         (self.op)(left, right)
     }
 }
 
-impl <T> Associativity<T> for Monoid<T>
-where T: AlgebraicElement {}
+impl<T> Associativity<T> for Monoid<T> where T: AlgebraicElement {}
 
-impl <T> SimigroupAction<T> for Monoid<T>
-where T: AlgebraicElement {}
+impl<T> SimigroupAction<T> for Monoid<T> where T: AlgebraicElement {}
 
-impl <T> Identity<T> for Monoid<T>
-where T: AlgebraicElement {}
+impl<T> Identity<T> for Monoid<T> where T: AlgebraicElement {}
 
-impl <T> MonoidActions<T> for Monoid<T>
-where T: AlgebraicElement {
+impl<T> MonoidActions<T> for Monoid<T>
+where
+    T: AlgebraicElement,
+{
     fn get_identity(&self) -> T {
         self.identity
     }
 }
 
-impl <T> Monoid<T>
-where T: AlgebraicElement {
+impl<T> Monoid<T>
+where
+    T: AlgebraicElement,
+{
     pub fn new(elements: Vec<T>, op: BinaryOp<T>) -> Option<Monoid<T>> {
-        match (check_closed(&elements, op), check_associative(&elements, op), find_identity(&elements, op)) {
+        match (
+            check_closed(&elements, op),
+            check_associative(&elements, op),
+            find_identity(&elements, op),
+        ) {
             (false, _, _) => {
                 println!("Operation is not closed on the set");
                 None
@@ -224,13 +263,17 @@ where T: AlgebraicElement {
                 println!("No identity found on the set");
                 None
             }
-            (true, true, Some(identity)) => Some(Monoid { elements, op, identity }),
+            (true, true, Some(identity)) => {
+                Some(Monoid { elements, op, identity })
+            }
         }
     }
 }
 
-impl <T> From<Simigroup<T>> for Monoid<T>
-where T: AlgebraicElement {
+impl<T> From<Simigroup<T>> for Monoid<T>
+where
+    T: AlgebraicElement,
+{
     fn from(value: Simigroup<T>) -> Self {
         let Simigroup { elements, op } = value;
         match find_identity(&elements, op) {
@@ -240,15 +283,19 @@ where T: AlgebraicElement {
     }
 }
 
-pub struct Group<T: AlgebraicElement> 
-where T: AlgebraicElement {
+pub struct Group<T: AlgebraicElement>
+where
+    T: AlgebraicElement,
+{
     pub elements: Vec<T>,
     pub op: BinaryOp<T>,
     pub identity: T,
 }
 
-impl <T> SetActions<T> for Group<T>
-where T: AlgebraicElement {
+impl<T> SetActions<T> for Group<T>
+where
+    T: AlgebraicElement,
+{
     fn elements(&self) -> &Vec<T> {
         &self.elements
     }
@@ -262,34 +309,36 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> MagmaActions<T> for Group<T>
-where T: AlgebraicElement {
+impl<T> MagmaActions<T> for Group<T>
+where
+    T: AlgebraicElement,
+{
     fn op(&self, left: T, right: T) -> T {
         (self.op)(left, right)
     }
 }
 
-impl <T> Associativity<T> for Group<T>
-where T: AlgebraicElement {}
+impl<T> Associativity<T> for Group<T> where T: AlgebraicElement {}
 
-impl <T> SimigroupAction<T> for Group<T>
-where T: AlgebraicElement {}
+impl<T> SimigroupAction<T> for Group<T> where T: AlgebraicElement {}
 
-impl <T> Identity<T> for Group<T>
-where T: AlgebraicElement {}
+impl<T> Identity<T> for Group<T> where T: AlgebraicElement {}
 
-impl <T> MonoidActions<T> for Group<T>
-where T: AlgebraicElement {
+impl<T> MonoidActions<T> for Group<T>
+where
+    T: AlgebraicElement,
+{
     fn get_identity(&self) -> T {
         self.identity
     }
 }
 
-impl <T> Inverse<T> for Group<T>
-where T: AlgebraicElement {}
+impl<T> Inverse<T> for Group<T> where T: AlgebraicElement {}
 
-impl <T> GroupActions<T> for Group<T>
-where T: AlgebraicElement {
+impl<T> GroupActions<T> for Group<T>
+where
+    T: AlgebraicElement,
+{
     fn get_inverse(&self, element: T) -> T {
         for &candidate in self.elements() {
             if (self.op)(element, candidate) == self.identity {
@@ -300,8 +349,10 @@ where T: AlgebraicElement {
     }
 }
 
-impl <T> Group<T>
-where T: AlgebraicElement {
+impl<T> Group<T>
+where
+    T: AlgebraicElement,
+{
     pub fn new(elements: Vec<T>, op: BinaryOp<T>) -> Option<Group<T>> {
         let identity = match find_identity(&elements, op) {
             Some(id) => id,
@@ -310,7 +361,11 @@ where T: AlgebraicElement {
                 return None;
             }
         };
-        match (check_closed(&elements, op), check_associative(&elements, op), check_inverse_with_id(&elements, op, identity)) {
+        match (
+            check_closed(&elements, op),
+            check_associative(&elements, op),
+            check_inverse_with_id(&elements, op, identity),
+        ) {
             (false, _, _) => {
                 println!("Operation is not closed on the set");
                 None
@@ -326,11 +381,12 @@ where T: AlgebraicElement {
             (true, true, true) => Some(Group { elements, op, identity }),
         }
     }
-    
 }
 
-impl <T> From<Monoid<T>> for Group<T>
-where T: AlgebraicElement {
+impl<T> From<Monoid<T>> for Group<T>
+where
+    T: AlgebraicElement,
+{
     fn from(value: Monoid<T>) -> Self {
         let Monoid { elements, op, identity } = value;
         if check_inverse_with_id(&elements, op, identity) {
@@ -338,5 +394,56 @@ where T: AlgebraicElement {
         } else {
             panic!("No inverse found on the set");
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_set() {
+        let set = Set::new(vec![1, 2, 3, 4, 5]);
+        assert_eq!(set.elements, vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_magma_not_closure() {
+        let set = Set::new(vec![1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| a + b;
+        let magma = Magma::new(set.elements, op);
+        assert!(magma.is_none());
+    }
+
+    #[test]
+    fn test_magma() {
+        let set = Set::new(vec![0, 1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| (a + b) % 6;
+        let magma = Magma::new(set.elements, op);
+        assert!(magma.is_none());
+    }
+
+    #[test]
+    fn test_simigroup() {
+        let set = Set::new(vec![0, 1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| (a + b) % 6;
+        let simigroup = Simigroup::new(set.elements, op);
+        assert_eq!(simigroup.unwrap().elements, vec![0, 1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_monoid() {
+        let set = Set::new(vec![1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| a + b;
+        let monoid = Monoid::new(set.elements, op);
+        assert_eq!(monoid.unwrap().elements, vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_group() {
+        let set = Set::new(vec![1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| a + b;
+        let group = Group::new(set.elements, op);
+        assert_eq!(group.unwrap().elements, vec![1, 2, 3, 4, 5]);
     }
 }

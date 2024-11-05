@@ -1,0 +1,11 @@
+# 最大行宽
+max_width = 80
+
+# 函数参数的布局方式
+fn_params_layout = "Tall"
+
+# struct 初始化宽度
+struct_lit_width = 80
+
+# 枚举变体宽度
+struct_variant_width = 80

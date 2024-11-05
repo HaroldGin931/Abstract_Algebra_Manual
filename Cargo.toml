@@ -4,3 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
+[workspace.metadata.clippy]
+warn = [
+    "unwrap_used",
+    "expect_used",
+    "await_holding_lock",
+    "needless_borrow",
+    "needless_return",
+    "clippy::single_match",
+    "too_many_arguments",
+    "cognitive_complexity",
+    "pedantic",
+]
