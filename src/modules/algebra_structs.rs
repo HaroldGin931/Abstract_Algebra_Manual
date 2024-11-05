@@ -401,6 +401,25 @@ where
 mod tests {
     use super::*;
 
+    fn get_test_set_and_op() -> (Set<i32>, BinaryOp<i32>) {
+        let set = Set::new(vec![0, 1, 2, 3, 4, 5, 6]);
+        let op = |a: i32, b: i32| a + b;
+        (set, op)
+    }
+
+    fn get_test_set_and_op_mod_6() -> (Set<i32>, BinaryOp<i32>) {
+        let set = Set::new(vec![0, 1, 2, 3, 4, 5]);
+        let op = |a: i32, b: i32| (a + b) % 6;
+        (set, op)
+    }
+
+
+    fn get_test_set_and_op_mod_7() -> (Set<i32>, BinaryOp<i32>) {
+        let set = Set::new(vec![0, 1, 2, 3, 4, 5, 6]);
+        let op = |a: i32, b: i32| (a + b) % 7;
+        (set, op)
+    }
+
     #[test]
     fn test_set() {
         let set = Set::new(vec![1, 2, 3, 4, 5]);
@@ -409,41 +428,44 @@ mod tests {
 
     #[test]
     fn test_magma_not_closure() {
-        let set = Set::new(vec![1, 2, 3, 4, 5]);
-        let op = |a: i32, b: i32| a + b;
-        let magma = Magma::new(set.elements, op);
+        let (set, op) = get_test_set_and_op();
+        let magma = Magma::new(set.elements.clone(), op);
         assert!(magma.is_none());
     }
 
     #[test]
     fn test_magma() {
-        let set = Set::new(vec![0, 1, 2, 3, 4, 5]);
-        let op = |a: i32, b: i32| (a + b) % 6;
+        let (set, op) = get_test_set_and_op_mod_6();
         let magma = Magma::new(set.elements, op);
-        assert!(magma.is_none());
+        assert!(magma.is_some());
     }
 
     #[test]
     fn test_simigroup() {
-        let set = Set::new(vec![0, 1, 2, 3, 4, 5]);
-        let op = |a: i32, b: i32| (a + b) % 6;
+        let (set, op) = get_test_set_and_op_mod_6();
         let simigroup = Simigroup::new(set.elements, op);
         assert_eq!(simigroup.unwrap().elements, vec![0, 1, 2, 3, 4, 5]);
     }
 
     #[test]
     fn test_monoid() {
-        let set = Set::new(vec![1, 2, 3, 4, 5]);
-        let op = |a: i32, b: i32| a + b;
+        let (set, op) = get_test_set_and_op_mod_7();
         let monoid = Monoid::new(set.elements, op);
-        assert_eq!(monoid.unwrap().elements, vec![1, 2, 3, 4, 5]);
+        assert_eq!(monoid.unwrap().elements, vec![0, 1, 2, 3, 4, 5, 6]);
     }
 
     #[test]
     fn test_group() {
-        let set = Set::new(vec![1, 2, 3, 4, 5]);
-        let op = |a: i32, b: i32| a + b;
+        let (set, op) = get_test_set_and_op_mod_7();
         let group = Group::new(set.elements, op);
-        assert_eq!(group.unwrap().elements, vec![1, 2, 3, 4, 5]);
+        assert_eq!(group.unwrap().elements, vec![0, 1, 2, 3, 4, 5, 6]);
+    }
+
+    #[test]
+    fn test_group_no_inverse() {
+        let (set, _) = get_test_set_and_op_mod_6();
+        let op = |a: i32, b: i32| (a * b) % 6;
+        let group = Group::new(set.elements, op);
+        assert!(group.is_none());
     }
 }
