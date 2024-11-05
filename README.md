@@ -10,7 +10,7 @@ Rust, as a language with many excellent features, allows us to use traits and ge
 
 ## Usage
 
-1. `cargo run`, 
+1. `cargo run`, then play with it
 2. Reading the code
    1. algebra_trait
    2. algebra_checker
@@ -35,26 +35,27 @@ The project therefore needs to complete the relevant interfaces and test functio
 - [x] Stage 2: Implement a basic Field trait with finite groups.
   - [x] Group Axiom Checker
   - [x] Field Axiom Checker 
-- [ ] Stage 3: Define self::one and self::zero, ensuring they exist within the set. Traits should be defined more precisely.
+- [x] Stage 3: Traits should be defined more precisely.
   - [x] Element inverse trait with defaut implement
   - [x] Remove `mut checker` new structure should be
     - checker_close_associative(set, op) --> simigroup, 
     - check_exist_id(simigroup) --> monoid, 
     - check_inverse(monoid) --> group,
     - check_commutative(group) --> abelian group
-  - [ ] more comment
 - [ ] Stage 4:
   - [ ] Element type, eg 'group.sample(0) --> group_element, group_element::new'
+  - [ ] Define self::one and self::zero, ensuring they exist within the set. 
   - [ ] Sub group
   - [ ] Gennerator
   - [ ] Order of group, order of element.
   - [ ] Option: default inverse operation of some common operation such like + *
-- [ ] Stage 5:
-  - [ ] Linear combination
   - [ ] graph example/group product, 
-  - [ ] EC Curve example
-  - [ ] Intergrate with ZKling
-- [ ] Stage 6:
+- [ ] Stage 5:
   - [ ] Ring Axiom Checker
   - [ ] Field extension
+- [ ] Stage 6:
   - [ ] Polynomial modulator
+  - [ ] Linear combination
+  - [ ] EC Curve example
+  - [ ] Intergrate with ZKling
+
