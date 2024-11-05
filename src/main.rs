@@ -30,10 +30,9 @@ fn isbigger(x: i32, y: i32) -> i32 {
 
 fn main() {
     let v = vec![0, 1, 2, 3, 4, 5, 6];
-    let v_no_zero = vec![1, 2, 3, 4, 5, 6, 7];
+    let v_no_zero = vec![1, 2, 3, 4, 5, 6];
     println!("Welcome to the algebraic group checker!\n\
-             This program will check if the given set and operation satisfy\n\
-             the group axioms\n\
+             This program will check if the given set and operation satisfy the group axioms\n\
              You can combine the set and the operation which provided below\n\
              to check if they satisfy the group axioms\n");
     loop{
@@ -59,11 +58,12 @@ fn main() {
             }
             
         }
-        println!("1. integer add");
-        println!("2. integer add with modulator_7");
-        println!("3. integer multiply");
-        println!("4. integer multiply with modulator_7");
-        println!("5. integer isbigger");
+        println!("Please pick one of the binary operations below:");
+        println!("1. integer add, a + b ");
+        println!("2. integer add with modulator_7, (a + b) mod 7");
+        println!("3. integer multiply, a * b");
+        println!("4. integer multiply with modulator_7, (a * b) mod 7");
+        println!("5. integer isbigger (a > b) ");
         io::stdin().read_line(&mut op_selection).expect("Failed to read line");
         let op_selection: i32 = op_selection.trim().parse().expect("Please type a number!");
         match op_selection {
@@ -90,34 +90,34 @@ fn main() {
 
         match selections {
             (1, 1) => {
-                group = Group::new(v, add);
+                group = Group::new(v.clone(), add);
             }
             (1, 2) => {
-                group = Group::new(v, add_with_modulator_7);
+                group = Group::new(v.clone(), add_with_modulator_7);
             }
             (1, 3) => {
-                group = Group::new(v, multiply);
+                group = Group::new(v.clone(), multiply);
             }
             (1, 4) => {
-                group = Group::new(v, multiply_with_modulator_7);
+                group = Group::new(v.clone(), multiply_with_modulator_7);
             }
             (1, 5) => {
-                group = Group::new(v, isbigger);
+                group = Group::new(v.clone(), isbigger);
             }
             (2, 1) => {
-                group = Group::new(v_no_zero, add);
+                group = Group::new(v_no_zero.clone(), add);
             }
             (2, 2) => {
-                group = Group::new(v_no_zero, add_with_modulator_7);
+                group = Group::new(v_no_zero.clone(), add_with_modulator_7);
             }
             (2, 3) => {
-                group = Group::new(v_no_zero, multiply);
+                group = Group::new(v_no_zero.clone(), multiply);
             }
             (2, 4) => {
-                group = Group::new(v_no_zero, multiply_with_modulator_7);
+                group = Group::new(v_no_zero.clone(), multiply_with_modulator_7);
             }
             (2, 5) => {
-                group = Group::new(v_no_zero, isbigger);
+                group = Group::new(v_no_zero.clone(), isbigger);
             }
             _ => {
                 println!("Invalid selection");
@@ -132,7 +132,6 @@ fn main() {
             }
             None => {
                 println!("Can not fit the group axioms, please try again");
-                return;
             }
         }
     }

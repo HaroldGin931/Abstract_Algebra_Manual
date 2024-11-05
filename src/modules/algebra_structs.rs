@@ -478,6 +478,13 @@ mod tests {
     }
 
     #[test]
+    fn test_group_mul() {
+        let op = |a: i32, b: i32| (a * b) % 7;
+        let group = Group::new(vec![1, 2, 3, 4, 5, 6], op);
+        assert_eq!(group.unwrap().elements, vec![1, 2, 3, 4, 5, 6]);
+    }
+
+    #[test]
     fn test_group_no_inverse() {
         let (set, _) = get_test_set_and_op_mod_6();
         let op = |a: i32, b: i32| (a * b) % 6;
