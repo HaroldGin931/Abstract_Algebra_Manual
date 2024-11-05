@@ -14,6 +14,7 @@ impl AlgebraicElement for f64 {}
 // for ec curve points
 impl AlgebraicElement for (u32, u32) {}
 
+// FIXME: Use HashMap instead of Vec
 pub struct Set<T: AlgebraicElement> {
     pub elements: Vec<T>,
 }
@@ -445,6 +446,21 @@ mod tests {
         let (set, op) = get_test_set_and_op_mod_6();
         let simigroup = Simigroup::new(set.elements, op);
         assert_eq!(simigroup.unwrap().elements, vec![0, 1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_simigroup_by_compare() {
+        let (set, _) = get_test_set_and_op_mod_6();
+        fn bigger_one(a: i32, b: i32) -> i32 {
+            if a > b {
+                1
+            } else {
+                0
+            }
+        }
+        let op = bigger_one;
+        let simigroup = Simigroup::new(set.elements, op);
+        assert!(simigroup.is_none());
     }
 
     #[test]

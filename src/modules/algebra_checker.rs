@@ -71,6 +71,8 @@ where
 // the struct without identity will return false
 // check_inverse should be able to check some structs without identity
 // such like Quasigroup
+// Actually we can use op(a, a) to go through all the elements in the set
+// and we can get the inverse of a during this process
 pub fn check_inverse_with_id<T>(v: &Vec<T>, op: BinaryOp<T>, id: T) -> bool
 where
     T: AlgebraicElement,
@@ -102,17 +104,6 @@ where
         }
     }
     true
-}
-
-pub fn check_inverse<T>(v: &Vec<T>, op: BinaryOp<T>) -> bool
-where
-    T: AlgebraicElement,
-{
-    let id = find_identity(v, op);
-    match id {
-        Some(id) => check_inverse_with_id(v, op, id),
-        None => false,
-    }
 }
 
 pub fn check_commutative<T, A>(g: A) -> bool
@@ -196,24 +187,18 @@ mod tests {
         assert_eq!(check_inverse_with_id(&elements, op, id), false);
     }
 
-    // #[test]
-    // fn test_check_commutative() {
-    //     let elements = vec![0, 1, 2, 3, 4, 5, 6];
-    //     let op = |x: i32, y: i32| (x + y) % 7;
-    //     let id = 0;
-    //     let m = {
-    //         Magma {
-    //             elements: elements,
-    //             op: op,
-    //         }
-    //     };
-    //     let g = {
-    //         Group {
-    //             elements: elements,
-    //             op: op,
-    //             id: id,
-    //         }
-    //     };
-    //     assert_eq!(check_commutative(g), true);
-    // }
+    #[test]
+    fn test_check_commutative() {
+        let elements = vec![0, 1, 2, 3, 4, 5, 6];
+        let op = |x: i32, y: i32| (x + y) % 7;
+        let identity = 0;
+        let g = {
+            Group {
+                elements,
+                op,
+                identity,
+            }
+        };
+        assert_eq!(check_commutative(g), true);
+    }
 }

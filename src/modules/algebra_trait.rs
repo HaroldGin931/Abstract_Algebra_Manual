@@ -2,6 +2,7 @@
 // elements and actions, the op's input should be the same type as the elements
 
 pub type BinaryOp<T> = fn(T, T) -> T;
+// pub type BinaryOp<T> = Box<dyn Fn(T, T) -> T>;
 
 pub trait AlgebraicElement: std::fmt::Debug + PartialEq + Copy {}
 

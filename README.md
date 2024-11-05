@@ -57,4 +57,4 @@ The project therefore needs to complete the relevant interfaces and test functio
 - [ ] Stage 6:
   - [ ] Ring Axiom Checker
   - [ ] Field extension
-  - [ ] Polynomial modular
+  - [ ] Polynomial modulator
